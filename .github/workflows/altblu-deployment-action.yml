@@ -33,10 +33,5 @@
             github_token: ${{ secrets.GITHUB_TOKEN }}
             publish_dir: ./dist
 
-        - name: Webhook
-          uses: distributhor/workflow-webhook
-          env:
-            webhook_url: "${webhookUrl}"
-            webhook_secret: "${webhookSecret}"
-            data: '{ "user": "${req.body.email}", "team" : "Team Data Goes Here" }'
+
   
