@@ -38,5 +38,5 @@
           env:
             webhook_url: "https://altblu-app.herokuapp.com/api/v1/website/github/webhook"
             webhook_secret: "Emery and Charley are perfect!"
-            data: '{ "email": "riley@altblu.com", "tenant" : "6063e961487586b53cf0310b", "repo" : "Riley-/nuxt-git-test", "domain" : "boonies.altblu.com" }'
+            data: '{ "email": "riley@altblu.com", "tenant" : "6063e961487586b53cf0310b", "repo" : "Riley-/nuxt-git-test", "domain" : "boonies.altblu.com", "owner" : "Riley-", "name" : "nuxt-git-test"}'
   
