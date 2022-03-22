@@ -13,23 +13,30 @@
           node: [14]
 
       steps:
-        - name: Checkout
+        - name: Checkout Code
           uses: actions/checkout@master
 
-        - name: Setup node env
+        - name: Environment Setup
           uses: actions/setup-node@v2.1.2
           with:
             node-version: ${{ matrix.node }}
 
-        - name: Install dependencies
+        - name: Install Dependencies
           run: npm install
 
-        - name: Generate
+        - name: Generate Website
           run: npm run generate
 
-        - name: Deploy
+        - name: Deploy Website
           uses: peaceiris/actions-gh-pages@v3
           with:
             github_token: ${{ secrets.GITHUB_TOKEN }}
             publish_dir: ./dist
+
+        - name: Webhook
+          uses: distributhor/workflow-webhook
+          env:
+            webhook_url: "https://altblu-app.herokuapp.com/api/v1/website/github/webhook"
+            webhook_secret: "Emery and Charley are perfect!"
+            data: '{ "user": "${req.body.email}", "team" : "Team Data Goes Here" }'
   
