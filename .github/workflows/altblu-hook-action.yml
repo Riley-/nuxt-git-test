@@ -1,12 +1,16 @@
 
   name: AltBlu S3 Deploy Production
 
-  on: repository_dispatch
+  on:
+    repository_dispatch:
+      types: [push, build]
 
   env:
     SSR: true
     TARGET: static
     FETCH: true
+    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   jobs:
     cd:
@@ -30,13 +34,13 @@
           run: npm install
 
         - name: Generate Website
-          run: npm run generate
+          run: ${{ github.event.client_payload.command }}
 
         - name: Deploy Static Website to S3
           uses: reggionick/s3-deploy@v3
           with:
             folder: build
-            bucket: undefined
+            bucket: ${{ github.event.client_payload.bucket }}
             bucket-region: us-west-2
 
         - name: Webhook
@@ -44,5 +48,5 @@
           env:
             webhook_url: "https://altblu-app.herokuapp.com/api/v1/website/github/webhook"
             webhook_secret: "Emery and Charley are perfect!"
-            data: '{ "email": "riley@altblu.com", "tenant" : "6063e961487586b53cf0310b", "repo" : "Riley-/nuxt-git-test", "domain" : "boonies.altblu.com", "owner" : "Riley-", "name" : "nuxt-git-test"}'
+            data: '{ "email": "${{ github.event.client_payload.email }}", "tenant" : "${{ github.event.client_payload.tenant }}", "repo" : "${{ github.event.client_payload.repo }}", "domain" : "${{ github.event.client_payload.domain }}", "owner" : "${{ github.event.client_payload.owner }}", "name" : "${{ github.event.client_payload.name }}"}'
   
