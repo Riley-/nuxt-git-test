@@ -30,18 +30,18 @@
           run: npm install
 
         - name: Generate Website
-          run: npm run generat3
+          run: npm run generatesa
 
         - name: Deploy Website
           uses: peaceiris/actions-gh-pages@v3
           with:
             github_token: ${{ secrets.GITHUB_TOKEN }}
-            publish_dir: ./diste
+            publish_dir: ./distasd
 
         - name: Webhook
           uses: distributhor/workflow-webhook@v2
           env:
             webhook_url: "https://altblu-app.herokuapp.com/api/v1/website/github/webhook"
             webhook_secret: "${{ secrets.GH_WEBHOOK_SECRET }}"
-            data: '{ "email": "riley@altblu.com", "tenant" : "6063e961487586b53cf0310b", "repo" : "Riley-/nuxt-git-test", "domain" : "botnies.altblu.com", "owner" : "Riley-", "name" : "nuxt-git-test"}'
+            data: '{ "email": "riley@altblu.com", "tenant" : "6063e961487586b53cf0310b", "repo" : "Riley-/nuxt-git-test", "domain" : "foolio.albani.co", "owner" : "Riley-", "name" : "nuxt-git-test"}'
   
