@@ -47,6 +47,6 @@
           uses: distributhor/workflow-webhook@v2
           env:
             webhook_url: "https://altblu-app.herokuapp.com/api/v1/website/github/webhook"
-            webhook_secret: "Emery and Charley are perfect!"
+            webhook_secret: "${{ secrets.GH_WEBHOOK_SECRET }}"
             data: '{ "email": "${{ github.event.client_payload.email }}", "tenant" : "${{ github.event.client_payload.tenant }}", "repo" : "${{ github.event.client_payload.repo }}", "domain" : "${{ github.event.client_payload.domain }}", "owner" : "${{ github.event.client_payload.owner }}", "name" : "${{ github.event.client_payload.name }}"}'
   
