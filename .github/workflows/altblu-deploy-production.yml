@@ -44,8 +44,8 @@
             aws-region: ${{ secrets.AWS_REGION }}
 
         - name: Clear the S3 Bucket
-          run: aws s3 rm s3://altblu-github-site-62e965d06e01fb02798d6575 --recursive
+          run: aws s3 rm s3://altblu-github-site-62e96c39058dbe15ad8e930a --recursive
 
         - name: Deploy Site to S3 Bucket
-          run: aws s3 sync ./dist s3://altblu-github-site-62e965d06e01fb02798d6575
+          run: aws s3 sync ./dist s3://altblu-github-site-62e96c39058dbe15ad8e930a
   
