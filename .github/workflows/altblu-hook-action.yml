@@ -34,14 +34,26 @@
           run: npm install
 
         - name: Generate Website
-          run: ${{ github.event.client_payload.command }}
+          run: npm run generate
 
-        - name: Deploy Static Website to S3
-          uses: reggionick/s3-deploy@v3
+        - name: Configure AWS Credentials
+          uses: aws-actions/configure-aws-credentials@v1
           with:
-            folder: build
-            bucket: ${{ github.event.client_payload.bucket }}
-            bucket-region: us-west-2
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: ${{ secrets.AWS_REGION }}
+
+        - name: Create an S3 Bucket for the Website
+          run: aws s3api create-bucket --bucket altblu-github-site-undefined --region us-west-2 --create-bucket-configuration LocationConstraint=us-west-2
+
+        - name: Configure Bucket with Policy
+          run: aws s3api put-bucket-policy --bucket altblu-github-site-undefined --policy '{"Version":"2012-10-17","Statement":[{"Sid":"PublicReadGetObject","Effect":"Allow","Principal":"*","Action":"s3:GetObject","Resource":"arn:aws:s3:::${{ github.event.repository.name }}/*"}]}'
+
+        - name: Deploy Site to S3 Bucket
+          run: aws s3 sync ./dist s3://altblu-github-site-undefined
+
+        - name: Configure Site Access on S3 Bucket
+          run: aws s3 website s3://altblu-github-site-undefined --index-document index.html --error-document index.html
 
         - name: Webhook
           uses: distributhor/workflow-webhook@v2
