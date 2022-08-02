@@ -42,16 +42,16 @@
             aws-region: ${{ secrets.AWS_REGION }}
 
         - name: Create an S3 Bucket for the Website
-          run: aws s3api create-bucket --bucket altblu-github-site-62e940b6a6e9863c3070667d --region us-west-2 --create-bucket-configuration LocationConstraint=us-west-2
+          run: aws s3api create-bucket --bucket altblu-github-site-62e942b181273e3db47c9092 --region us-west-2 --create-bucket-configuration LocationConstraint=us-west-2
 
         - name: Configure Bucket with Policy
-          run: aws s3api put-bucket-policy --bucket altblu-github-site-62e940b6a6e9863c3070667d --policy '{"Version":"2012-10-17","Statement":[{"Sid":"PublicReadGetObject","Effect":"Allow","Principal":"*","Action":"s3:GetObject","Resource":"arn:aws:s3:::${{ github.event.repository.name }}/*"}]}'
+          run: aws s3api put-bucket-policy --bucket altblu-github-site-62e942b181273e3db47c9092 --policy '{"Version":"2012-10-17","Statement":[{"Sid":"PublicReadGetObject","Effect":"Allow","Principal":"*","Action":"s3:GetObject","Resource":"arn:aws:s3:::altblu-github-site-62e942b181273e3db47c9092/*"}]}'
 
         - name: Deploy Site to S3 Bucket
-          run: aws s3 sync ./dist s3://altblu-github-site-62e940b6a6e9863c3070667d
+          run: aws s3 sync ./dist s3://altblu-github-site-62e942b181273e3db47c9092
 
         - name: Configure Site Access on S3 Bucket
-          run: aws s3 website s3://altblu-github-site-62e940b6a6e9863c3070667d --index-document index.html --error-document index.html
+          run: aws s3 website s3://altblu-github-site-62e942b181273e3db47c9092 --index-document index.html --error-document index.html
 
         - name: Webhook
           uses: distributhor/workflow-webhook@v2
