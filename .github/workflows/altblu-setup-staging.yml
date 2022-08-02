@@ -1,0 +1,62 @@
+
+  name: AltBlu Github Pages Deploy Staging [Setup]
+
+  on: [push, pull_request]
+
+  env:
+    SSR: false
+    TARGET: static
+    FETCH: false
+
+  jobs:
+    cd:
+      runs-on: ${{ matrix.os }}
+
+      strategy:
+        matrix:
+          os: [ubuntu-latest]
+          node: [14]
+
+      steps:
+        - name: Checkout Code
+          uses: actions/checkout@master
+
+        - name: Environment Setup
+          uses: actions/setup-node@v2.1.2
+          with:
+            node-version: ${{ matrix.node }}
+
+        - name: Install Dependencies
+          run: npm install
+
+        - name: Generate Website
+          run: npm run generate
+
+        - name: Deploy Website
+          uses: peaceiris/actions-gh-pages@v3
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_dir: ./dist
+
+        - name: Sleep for 30 seconds
+          run: sleep 30s
+          shell: bash
+
+        - name: Setup Webhook
+          uses: distributhor/workflow-webhook@v2
+          env:
+            webhook_url: 'https://altblu-app.herokuapp.com/api/v1/website/github/webhook/setup'
+            webhook_secret: ${{ secrets.GH_WEBHOOK_SECRET }}
+            data: '{ "repo" : "Riley-/nuxt-git-test", "owner" : "Riley-", "name" : "nuxt-git-test" }'
+
+        - name: Sleep for 60 seconds
+          run: sleep 60s
+          shell: bash
+
+        - name: Configure Webhook
+          uses: distributhor/workflow-webhook@v2
+          env:
+            webhook_url: 'https://altblu-app.herokuapp.com/api/v1/website/github/webhook/update'
+            webhook_secret: ${{ secrets.GH_WEBHOOK_SECRET }}
+            data: '{ "repo" : "Riley-/nuxt-git-test", "owner" : "Riley-", "name" : "nuxt-git-test" }'
+  
