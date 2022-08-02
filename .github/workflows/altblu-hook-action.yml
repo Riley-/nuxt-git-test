@@ -1,7 +1,9 @@
 
-  name: AltBlu S3 Deploy Production
+  name: AltBlu S3 Deploy Production [Dispatch]
 
-  on: [push, pull_request]
+  on:
+    repository_dispatch:
+      types: [production, push, build]
 
   env:
     SSR: true
@@ -41,22 +43,9 @@
             aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             aws-region: ${{ secrets.AWS_REGION }}
 
-        - name: Create an S3 Bucket for the Website
-          run: aws s3api create-bucket --bucket altblu-github-site-62e942b181273e3db47c9092 --region us-west-2 --create-bucket-configuration LocationConstraint=us-west-2
-
-        - name: Configure Bucket with Policy
-          run: aws s3api put-bucket-policy --bucket altblu-github-site-62e942b181273e3db47c9092 --policy '{"Version":"2012-10-17","Statement":[{"Sid":"PublicReadGetObject","Effect":"Allow","Principal":"*","Action":"s3:GetObject","Resource":"arn:aws:s3:::altblu-github-site-62e942b181273e3db47c9092/*"}]}'
+        - name: Clear the S3 Bucket
+          run: aws s3 rm s3://altblu-github-site-62e9486d33933919f82f5ac3 --recursive
 
         - name: Deploy Site to S3 Bucket
-          run: aws s3 sync ./dist s3://altblu-github-site-62e942b181273e3db47c9092
-
-        - name: Configure Site Access on S3 Bucket
-          run: aws s3 website s3://altblu-github-site-62e942b181273e3db47c9092 --index-document index.html --error-document index.html
-
-        - name: Webhook
-          uses: distributhor/workflow-webhook@v2
-          env:
-            webhook_url: "https://altblu-app.herokuapp.com/api/v1/website/github/webhook"
-            webhook_secret: "${{ secrets.GH_WEBHOOK_SECRET }}"
-            data: '{ "email": "${{ github.event.client_payload.email }}", "tenant" : "${{ github.event.client_payload.tenant }}", "repo" : "${{ github.event.client_payload.repo }}", "domain" : "${{ github.event.client_payload.domain }}", "owner" : "${{ github.event.client_payload.owner }}", "name" : "${{ github.event.client_payload.name }}"}'
+          run: aws s3 sync ./dist s3://altblu-github-site-62e9486d33933919f82f5ac3
   

@@ -1,5 +1,5 @@
 
-  name: AltBlu Github Pages Deploy Staging
+  name: AltBlu Github Pages Deploy Staging [Setup]
 
   on: [push, pull_request]
 
