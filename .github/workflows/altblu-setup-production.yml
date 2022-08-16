@@ -42,21 +42,18 @@
             aws-region: ${{ secrets.AWS_REGION }}
 
         - name: Create an S3 Bucket for the Website
-          run: aws s3api create-bucket --bucket altblu-github-site-62ed8c5c5a9452de8841712f --region us-west-2 --create-bucket-configuration LocationConstraint=us-west-2
+          run: aws s3api create-bucket --bucket altblu-github-site-62fc1c514c62c6967a357de7 --region us-west-2 --create-bucket-configuration LocationConstraint=us-west-2
 
         - name: Configure Bucket with Policy
-          run: aws s3api put-bucket-policy --bucket altblu-github-site-62ed8c5c5a9452de8841712f --policy '{"Version":"2012-10-17","Statement":[{"Sid":"PublicReadGetObject","Effect":"Allow","Principal":"*","Action":"s3:GetObject","Resource":"arn:aws:s3:::altblu-github-site-62ed8c5c5a9452de8841712f/*"}]}'
+          run: aws s3api put-bucket-policy --bucket altblu-github-site-62fc1c514c62c6967a357de7 --policy '{"Version":"2012-10-17","Statement":[{"Sid":"PublicReadGetObject","Effect":"Allow","Principal":"*","Action":"s3:GetObject","Resource":"arn:aws:s3:::altblu-github-site-62fc1c514c62c6967a357de7/*"}]}'
 
         - name: Deploy Site to S3 Bucket
-          run: aws s3 sync ./dist s3://altblu-github-site-62ed8c5c5a9452de8841712f
+          run: aws s3 sync ./dist s3://altblu-github-site-62fc1c514c62c6967a357de7
 
         - name: Configure Site Access on S3 Bucket
-          run: aws s3 website s3://altblu-github-site-62ed8c5c5a9452de8841712f --index-document index.html --error-document index.html
+          run: aws s3 website s3://altblu-github-site-62fc1c514c62c6967a357de7 --index-document index.html --error-document index.html
 
-        - name: Webhook
-          uses: distributhor/workflow-webhook@v2
-          env:
-            webhook_url: "https://altblu-app.herokuapp.com/api/v1/website/github/webhook"
-            webhook_secret: "${{ secrets.GH_WEBHOOK_SECRET }}"
-            data: '{ "email": "${{ github.event.client_payload.email }}", "tenant" : "${{ github.event.client_payload.tenant }}", "repo" : "${{ github.event.client_payload.repo }}", "domain" : "${{ github.event.client_payload.domain }}", "owner" : "${{ github.event.client_payload.owner }}", "name" : "${{ github.event.client_payload.name }}"}'
-  
+        - name: Create Cloudfront Distribution (Regional)
+          id: cloudfront-distribution
+          run: aws cloudfront create-distribution --origin-domain-name altblu-github-site-62fc1c514c62c6967a357de7.s3-website-us-west-2.amazonaws.com --default-root-object index.html
+    

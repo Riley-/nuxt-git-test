@@ -37,6 +37,7 @@
           with:
             github_token: ${{ secrets.GITHUB_TOKEN }}
             publish_dir: ./dist
+            cname: nuxt-git-test.altblu.com
 
         - name: Sleep for 30 seconds
           run: sleep 30s
